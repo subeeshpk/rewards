@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Reward Program API
+  description: API for managing customer transactions and rewards
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: rewards
+    description: APIs for Rewards Program
+
+paths:
+  /transactions:
+    post:
+      summary: Save a transaction
+      operationId: saveTransaction
+      tags:
+        - rewards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+      responses:
+        '201':
+          description: Transaction saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+  /transactions/rewards:
+    get:
+      summary: Retrieve rewards for a customer
+      operationId: getRewards
+      tags:
+        - rewards
+      parameters:
+        - name: customerId
+          in: query
+          description: ID of the customer
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RewardResponse'
+components:
+  schemas:
+    Transaction:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        amount:
+          type: number
+    RewardResponse:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        totalReward:
+          type: integer
+        monthlyRewards:
+          type: array
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+              reward:
+                type: integer
