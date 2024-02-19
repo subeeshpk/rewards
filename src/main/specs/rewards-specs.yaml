@@ -56,7 +56,7 @@ paths:
           description: ID of the customer
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: Successful operation
@@ -71,17 +71,19 @@ components:
       properties:
         id:
           type: string
+        transactionDate:
+          type: string
         customerId:
           type: string
         amount:
-          type: string
+          type: integer
     RewardResponse:
       type: object
       properties:
         customerId:
           type: string
         totalReward:
-          type: string
+          type: integer
         monthlyRewards:
           type: array
           items:

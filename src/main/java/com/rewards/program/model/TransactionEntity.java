@@ -1,26 +1,14 @@
 package com.rewards.program.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModelProperty;
-
+import org.springframework.data.annotation.ReadOnlyProperty;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.Objects;
 
 @Entity
 @Table(name = "Transaction")
 public class TransactionEntity {
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,14 +16,23 @@ public class TransactionEntity {
     private Integer id;
 
     @Column(name = "customerId")
-    private Integer customerId;
+    private String customerId;
 
     @Column(name = "transactionDate")
-    private Date transactionDate;
+    private LocalDateTime transactionDate;
 
+    @Column(name = "rewardPoints")
+    private Integer rewardPoints;
 
     @Column(name = "amount")
-    private String amount;
+    private Integer amount;
+
+    private Integer totalRewards;
+
+    @PrePersist
+    protected void onCreate() {
+        transactionDate = LocalDateTime.now();
+    }
 
     public Integer getRewardPoints() {
         return rewardPoints;
@@ -45,22 +42,43 @@ public class TransactionEntity {
         this.rewardPoints = rewardPoints;
     }
 
-    private Integer rewardPoints;
-
-    public Integer getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
-    public String getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
+    }
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(LocalDateTime transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public Integer getTotalRewards() {
+        return totalRewards;
+    }
+
+    public void setTotalRewards(Integer totalRewards) {
+        this.totalRewards = totalRewards;
     }
 }
 

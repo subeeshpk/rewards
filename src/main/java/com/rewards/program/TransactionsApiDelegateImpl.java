@@ -15,7 +15,7 @@ public class TransactionsApiDelegateImpl implements TransactionsApiDelegate {
     TransactionService transactionService;
 
     @Override
-    public ResponseEntity<RewardResponse> getRewards(Integer customerId) {
+    public ResponseEntity<RewardResponse> getRewards(String customerId) {
         return transactionService.getRewards(customerId);
     }
 

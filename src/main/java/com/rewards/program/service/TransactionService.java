@@ -3,10 +3,13 @@ package com.rewards.program.service;
 import com.rewards.program.model.RewardResponse;
 import com.rewards.program.model.Transaction;
 import com.rewards.program.model.TransactionEntity;
+import org.graalvm.util.CollectionsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,30 +18,40 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-    public ResponseEntity<RewardResponse> getRewards(Integer customerId) {
+    public ResponseEntity<RewardResponse> getRewards(String customerId) {
     //Get total monthly rewards for the customer
-
-        return null;
+        List<TransactionEntity> transactionEntities = transactionRepository.findRewardReportByCustomer(customerId,
+            LocalDateTime.now().minusMonths(3), LocalDateTime.now());
+        RewardResponse rewardResponse = new RewardResponse();
+        if(CollectionUtils.isEmpty(transactionEntities)) {
+            rewardResponse.setTotalReward(transactionEntities.get(0).getTotalRewards());
+            rewardResponse.setCustomerId(transactionEntities.get(0).getCustomerId());
+        }
+    return null;
     }
 
     public ResponseEntity<Transaction> saveTransaction(Transaction transaction) {
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setCustomerId(Integer.parseInt(transaction.getCustomerId()));
+        transactionEntity.setCustomerId(transaction.getCustomerId());
         transactionEntity.setAmount(transaction.getAmount());
-        transactionEntity.setRewardPoints(calculateRewards(Integer.parseInt(transaction.getAmount())));
-
+        transactionEntity.setRewardPoints(calculateRewards(transaction.getAmount()));
         transactionRepository.save(transactionEntity);
         transaction.setId(transactionEntity.getId().toString());
+        transaction.setTransactionDate(transactionEntity.getTransactionDate().toString());
         return ResponseEntity.ok(transaction);
     }
 
     private int calculateRewards(double amountSpent) {
-        int pointsOver100 = (int) Math.max(0, amountSpent - 100) * 2;
-        int pointsBetween50And100 = (int) Math.min(50, Math.max(0, amountSpent - 50));
-        int totalPoints = pointsOver100 + pointsBetween50And100;
-        return totalPoints;
-    }
+        int rewardPoints = 0;
+        if (amountSpent > 100) {
+            rewardPoints += 2 * (int) (amountSpent - 100);
+        }
+        if (amountSpent > 50) {
+            rewardPoints += (int) Math.min(50, amountSpent - 50);
+        }
+        return rewardPoints;
 
+    }
 
     public ResponseEntity<List<Transaction>> getTransactions() {
         List<TransactionEntity> result = transactionRepository.findAll();
@@ -48,6 +61,7 @@ public class TransactionService {
             transaction.setId(entity.getId().toString());
             transaction.setCustomerId(entity.getCustomerId().toString());
             transaction.setAmount(entity.getAmount());
+            transaction.setTransactionDate(entity.getTransactionDate().toString());
             transactionList.add(transaction);
         }
         return ResponseEntity.ok(transactionList);
