@@ -29,6 +29,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Transaction'
+    get:
+      summary: Retrieve all transactions
+      operationId: getTransactions
+      tags:
+        - rewards
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
   /transactions/rewards:
     get:
       summary: Retrieve rewards for a customer
@@ -54,17 +69,19 @@ components:
     Transaction:
       type: object
       properties:
+        id:
+          type: string
         customerId:
-          type: integer
+          type: string
         amount:
-          type: number
+          type: string
     RewardResponse:
       type: object
       properties:
         customerId:
-          type: integer
+          type: string
         totalReward:
-          type: integer
+          type: string
         monthlyRewards:
           type: array
           items:
@@ -73,4 +90,4 @@ components:
               month:
                 type: string
               reward:
-                type: integer
+                type: string
