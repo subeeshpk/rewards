@@ -1,4 +1,4 @@
-package com.rewards.program;
+package com.rewards.program.common;
 
 import javax.persistence.SqlResultSetMapping;
 

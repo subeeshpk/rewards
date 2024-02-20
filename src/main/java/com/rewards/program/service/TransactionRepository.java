@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
-import static com.rewards.program.Constants.REWARD_REPORT_QUERY_NAME;
+import static com.rewards.program.common.Constants.REWARD_REPORT_QUERY_NAME;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Long> {

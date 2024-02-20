@@ -2,9 +2,9 @@ package com.rewards.program.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import static com.rewards.program.Constants.REWARD_REPORT_QUERY;
-import static com.rewards.program.Constants.REWARD_REPORT_QUERY_NAME;
-import static com.rewards.program.Constants.REWARD_REPORT_QUERY_MAPPER;
+import static com.rewards.program.common.Constants.REWARD_REPORT_QUERY;
+import static com.rewards.program.common.Constants.REWARD_REPORT_QUERY_NAME;
+import static com.rewards.program.common.Constants.REWARD_REPORT_QUERY_MAPPER;
 
 @NamedNativeQuery( name = REWARD_REPORT_QUERY_NAME,
         query = REWARD_REPORT_QUERY,

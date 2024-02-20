@@ -17,7 +17,6 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
     public ResponseEntity<List<RewardResponse>> getRewards() {
-
         List<TransactionReportHelper>  transactionReportHelper =
                 transactionRepository.fetchMonthlyReport(LocalDateTime.now().minusMonths(3),
                         LocalDateTime.now());
@@ -25,7 +24,6 @@ public class TransactionService {
         if (!CollectionUtils.isEmpty(transactionReportHelper)) {
             Map<String, List<TransactionReportHelper>> customerMap = transactionReportHelper.stream()
                     .collect(Collectors.groupingBy(TransactionReportHelper::getCustomerId));
-
                    rewardResponses = customerMap.entrySet().stream()
                     .map(entry -> {
                         List<TransactionReportHelper> transactionReportHelpers = entry.getValue();
@@ -40,7 +38,6 @@ public class TransactionService {
                                     return monthlyRewards;
                                 })
                                 .collect(Collectors.toList());
-
                         RewardResponse rewardResponse = new RewardResponse();
                         rewardResponse.setCustomerId(entry.getKey());
                         rewardResponse.setTotalReward(totalRewards);
@@ -49,7 +46,6 @@ public class TransactionService {
                     })
                     .collect(Collectors.toList());
         }
-
     return ResponseEntity.ok(rewardResponses);
     }
 
