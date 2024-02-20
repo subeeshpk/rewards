@@ -50,22 +50,27 @@ paths:
       operationId: getRewards
       tags:
         - rewards
-      parameters:
-        - name: customerId
-          in: query
-          description: ID of the customer
-          required: true
-          schema:
-            type: string
+#      parameters:
+#        - name: customerId
+#          in: query
+#          description: ID of the customer
+#          required: true
+#          schema:
+#            type: string
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RewardResponse'
+                $ref: '#/components/schemas/RewardResponseList'
+
 components:
   schemas:
+    RewardResponseList:
+      type: array
+      items:
+        $ref: '#/components/schemas/RewardResponse'
     Transaction:
       type: object
       properties:
@@ -91,5 +96,5 @@ components:
             properties:
               month:
                 type: string
-              reward:
-                type: string
+              rewardPoint:
+                type: integer

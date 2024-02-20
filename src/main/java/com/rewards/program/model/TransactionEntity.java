@@ -1,33 +1,40 @@
 package com.rewards.program.model;
 
-import org.springframework.data.annotation.ReadOnlyProperty;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
+import static com.rewards.program.Constants.REWARD_REPORT_QUERY;
+import static com.rewards.program.Constants.REWARD_REPORT_QUERY_NAME;
+import static com.rewards.program.Constants.REWARD_REPORT_QUERY_MAPPER;
+
+@NamedNativeQuery( name = REWARD_REPORT_QUERY_NAME,
+        query = REWARD_REPORT_QUERY,
+        resultSetMapping = REWARD_REPORT_QUERY_MAPPER)
+
+@SqlResultSetMapping( name = REWARD_REPORT_QUERY_MAPPER,
+        classes = @ConstructorResult(targetClass = TransactionReportHelper.class,
+                columns = { @ColumnResult(name = "customerId", type = String.class),
+                        @ColumnResult(name = "monthAndYear", type = String.class),
+                        @ColumnResult(name = "monthlyPoints", type = Integer.class)}) )
 
 @Entity
 @Table(name = "Transaction")
 public class TransactionEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private Integer id;
 
-    @Column(name = "customerId")
+    @Column(name = "CUSTOMER_ID")
     private String customerId;
 
-    @Column(name = "transactionDate")
+    @Column(name = "TRANSACTION_DATE")
     private LocalDateTime transactionDate;
 
-    @Column(name = "rewardPoints")
+    @Column(name = "REWARD_POINTS")
     private Integer rewardPoints;
 
-    @Column(name = "amount")
+    @Column(name = "AMOUNT")
     private Integer amount;
-
-    private Integer totalRewards;
 
     @PrePersist
     protected void onCreate() {
@@ -71,14 +78,6 @@ public class TransactionEntity {
 
     public void setTransactionDate(LocalDateTime transactionDate) {
         this.transactionDate = transactionDate;
-    }
-
-    public Integer getTotalRewards() {
-        return totalRewards;
-    }
-
-    public void setTotalRewards(Integer totalRewards) {
-        this.totalRewards = totalRewards;
     }
 }
 

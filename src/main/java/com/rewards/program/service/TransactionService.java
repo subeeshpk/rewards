@@ -1,33 +1,56 @@
 package com.rewards.program.service;
 
-import com.rewards.program.model.RewardResponse;
-import com.rewards.program.model.Transaction;
-import com.rewards.program.model.TransactionEntity;
-import org.graalvm.util.CollectionsUtil;
+import com.rewards.program.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-    public ResponseEntity<RewardResponse> getRewards(String customerId) {
-    //Get total monthly rewards for the customer
-        List<TransactionEntity> transactionEntities = transactionRepository.findRewardReportByCustomer(customerId,
-            LocalDateTime.now().minusMonths(3), LocalDateTime.now());
-        RewardResponse rewardResponse = new RewardResponse();
-        if(CollectionUtils.isEmpty(transactionEntities)) {
-            rewardResponse.setTotalReward(transactionEntities.get(0).getTotalRewards());
-            rewardResponse.setCustomerId(transactionEntities.get(0).getCustomerId());
+    public ResponseEntity<List<RewardResponse>> getRewards() {
+
+        List<TransactionReportHelper>  transactionReportHelper =
+                transactionRepository.fetchMonthlyReport(LocalDateTime.now().minusMonths(3),
+                        LocalDateTime.now());
+        List<RewardResponse> rewardResponses = null;
+        if (!CollectionUtils.isEmpty(transactionReportHelper)) {
+            Map<String, List<TransactionReportHelper>> customerMap = transactionReportHelper.stream()
+                    .collect(Collectors.groupingBy(TransactionReportHelper::getCustomerId));
+
+                   rewardResponses = customerMap.entrySet().stream()
+                    .map(entry -> {
+                        List<TransactionReportHelper> transactionReportHelpers = entry.getValue();
+                        int totalRewards = transactionReportHelpers.stream()
+                                .mapToInt(TransactionReportHelper::getMonthlyPoints)
+                                .sum();
+                        List<RewardResponseMonthlyRewards> monthlyRewardsList = transactionReportHelpers.stream()
+                                .map(helper -> {
+                                    RewardResponseMonthlyRewards monthlyRewards = new RewardResponseMonthlyRewards();
+                                    monthlyRewards.setRewardPoint(helper.getMonthlyPoints());
+                                    monthlyRewards.setMonth(helper.getMonthAndYear());
+                                    return monthlyRewards;
+                                })
+                                .collect(Collectors.toList());
+
+                        RewardResponse rewardResponse = new RewardResponse();
+                        rewardResponse.setCustomerId(entry.getKey());
+                        rewardResponse.setTotalReward(totalRewards);
+                        rewardResponse.setMonthlyRewards(monthlyRewardsList);
+                        return rewardResponse;
+                    })
+                    .collect(Collectors.toList());
         }
-    return null;
+
+    return ResponseEntity.ok(rewardResponses);
     }
 
     public ResponseEntity<Transaction> saveTransaction(Transaction transaction) {
