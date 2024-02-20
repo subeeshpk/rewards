@@ -1,5 +1,6 @@
 package com.rewards.program.service;
 
+import com.rewards.program.common.CalculationUtil;
 import com.rewards.program.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,23 +54,11 @@ public class TransactionService {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setCustomerId(transaction.getCustomerId());
         transactionEntity.setAmount(transaction.getAmount());
-        transactionEntity.setRewardPoints(calculateRewards(transaction.getAmount()));
+        transactionEntity.setRewardPoints(CalculationUtil.calculateRewards(transaction.getAmount()));
         transactionRepository.save(transactionEntity);
         transaction.setId(transactionEntity.getId().toString());
         transaction.setTransactionDate(transactionEntity.getTransactionDate().toString());
         return ResponseEntity.ok(transaction);
-    }
-
-    private int calculateRewards(double amountSpent) {
-        int rewardPoints = 0;
-        if (amountSpent > 100) {
-            rewardPoints += 2 * (int) (amountSpent - 100);
-        }
-        if (amountSpent > 50) {
-            rewardPoints += (int) Math.min(50, amountSpent - 50);
-        }
-        return rewardPoints;
-
     }
 
     public ResponseEntity<List<Transaction>> getTransactions() {

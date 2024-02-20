@@ -1,7 +1,5 @@
 package com.rewards.program.common;
 
-import javax.persistence.SqlResultSetMapping;
-
 public class Constants {
 
     public static final String REWARD_REPORT_QUERY_NAME = "REPORT_QUERY_NAME";

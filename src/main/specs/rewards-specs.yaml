@@ -50,13 +50,6 @@ paths:
       operationId: getRewards
       tags:
         - rewards
-#      parameters:
-#        - name: customerId
-#          in: query
-#          description: ID of the customer
-#          required: true
-#          schema:
-#            type: string
       responses:
         '200':
           description: Successful operation
